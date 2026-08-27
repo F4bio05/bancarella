@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans:
+    ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-brand-50: #eefbf4;
+  --color-brand-100: #d5f5e3;
+  --color-brand-200: #aeeacb;
+  --color-brand-300: #78d8ac;
+  --color-brand-400: #41bd89;
+  --color-brand-500: #1da16d;
+  --color-brand-600: #108157;
+  --color-brand-700: #0d6748;
+  --color-brand-800: #0d523a;
+  --color-brand-900: #0b4331;
+}
+
+/* Il tema e' scelto dall'utente e salvato in un cookie: il server mette
+   data-tema su <html>, quindi al primo caricamento non c'e' alcun lampo di
+   colore sbagliato. Il chiaro e' il default. */
+
+:root,
+:root[data-tema="chiaro"] {
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --surface-2: #f1efe9;
+  --border: #e2ded4;
+  --text: #1b1a17;
+  --muted: #6d6a61;
+  color-scheme: light;
+}
+
+:root[data-tema="scuro"] {
+  --bg: #14140f;
+  --surface: #1e1e18;
+  --surface-2: #272720;
+  --border: #35352c;
+  --text: #f2f0e9;
+  --muted: #a3a096;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-tema="sistema"] {
+    --bg: #14140f;
+    --surface: #1e1e18;
+    --surface-2: #272720;
+    --border: #35352c;
+    --text: #f2f0e9;
+    --muted: #a3a096;
+    color-scheme: dark;
+  }
+}
+
+/* La variante `dark:` di Tailwind segue il tema scelto, non solo il sistema. */
+@custom-variant dark {
+  &:where([data-tema="scuro"], [data-tema="scuro"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where([data-tema="sistema"], [data-tema="sistema"] *) {
+      @slot;
+    }
+  }
+}
+
+html {
+  /* Evita lo zoom involontario e il "rubber band" durante l'uso in bancarella. */
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Niente selezione/callout accidentali sui controlli a tocco. */
+button,
+[role="button"],
+.no-select {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px; /* iOS non zooma piu' al focus */
+}
+
+@utility surface {
+  background: var(--surface);
+}
+@utility surface-2 {
+  background: var(--surface-2);
+}
+@utility text-muted {
+  color: var(--muted);
+}
+@utility border-app {
+  border-color: var(--border);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.animate-sheet {
+  animation: sheet-up 0.22s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade {
+  animation: fade-in 0.18s ease-out;
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-pop {
+  animation: pop 0.25s ease-out;
+}
