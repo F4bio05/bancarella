@@ -9,7 +9,7 @@ import type { DayState, Person } from "@/lib/types";
 import { QUERY_AFFIANCATO, useMedia } from "@/lib/useMedia";
 import { useGiornata } from "@/lib/useGiornata";
 import { Tastierino } from "./Tastierino";
-import { Avviso, Bottone, Pallino, Pannello, Vuoto } from "./ui";
+import { Avviso, Bottone, CardPersona, Pallino, Pannello, Vuoto } from "./ui";
 import { AzioniGiornata } from "./Nav";
 
 const CAMPO =
@@ -555,21 +555,26 @@ function GiornataAperta({
         {/* Colonna destra: tastierino sempre a portata di pollice */}
         {affiancato && (
           <aside className="surface sticky top-4 max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain rounded-3xl border border-app p-4">
-            <div className="mb-3 flex items-baseline justify-between gap-2">
-              <div className="min-w-0">
+            <div className="mb-3 border-b border-app pb-3">
+              {persona ? (
+                <CardPersona
+                  nome={persona.name}
+                  totaleCents={persona.totalCents}
+                  articoli={persona.items}
+                  azione={
+                    <button
+                      onClick={() => {
+                        setSelezionato(null);
+                        setDigits("");
+                      }}
+                      className="text-xs font-semibold text-muted"
+                    >
+                      Deseleziona
+                    </button>
+                  }
+                />
+              ) : (
                 <h2 className="text-lg font-bold">Articolo venduto</h2>
-                <p className="text-sm text-muted">Digita il prezzo e aggiungilo al saldo</p>
-              </div>
-              {persona && (
-                <button
-                  onClick={() => {
-                    setSelezionato(null);
-                    setDigits("");
-                  }}
-                  className="shrink-0 text-sm font-semibold text-muted"
-                >
-                  Deseleziona
-                </button>
               )}
             </div>
             {tastierino ?? (
@@ -613,8 +618,15 @@ function GiornataAperta({
             setSelezionato(null);
             setDigits("");
           }}
-          titolo="Articolo venduto"
-          sottotitolo="Digita il prezzo e aggiungilo al saldo della persona"
+          intestazione={
+            persona && (
+              <CardPersona
+                nome={persona.name}
+                totaleCents={persona.totalCents}
+                articoli={persona.items}
+              />
+            )
+          }
         >
           {tastierino}
         </Pannello>

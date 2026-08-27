@@ -51,6 +51,7 @@ export function Pannello({
   onChiudi,
   titolo,
   sottotitolo,
+  intestazione,
   children,
   larghezza = "max-w-lg",
 }: {
@@ -58,6 +59,8 @@ export function Pannello({
   onChiudi: () => void;
   titolo?: ReactNode;
   sottotitolo?: ReactNode;
+  /** Sostituisce titolo e sottotitolo con un contenuto qualsiasi. */
+  intestazione?: ReactNode;
   children: ReactNode;
   larghezza?: string;
 }) {
@@ -89,10 +92,14 @@ export function Pannello({
         aria-modal="true"
         className={`animate-sheet surface relative flex max-h-[92dvh] w-full ${larghezza} flex-col overflow-hidden rounded-t-3xl border border-app sm:rounded-3xl`}
       >
-        <div className="flex items-start gap-3 border-b border-app px-5 pb-3 pt-4">
+        <div className="flex items-start gap-3 border-b border-app px-4 pb-3 pt-4">
           <div className="min-w-0 flex-1">
-            {titolo && <h2 className="truncate text-xl font-bold">{titolo}</h2>}
-            {sottotitolo && <p className="mt-0.5 text-sm text-muted">{sottotitolo}</p>}
+            {intestazione ?? (
+              <>
+                {titolo && <h2 className="truncate text-xl font-bold">{titolo}</h2>}
+                {sottotitolo && <p className="mt-0.5 text-sm text-muted">{sottotitolo}</p>}
+              </>
+            )}
           </div>
           <button
             onClick={onChiudi}
@@ -102,7 +109,7 @@ export function Pannello({
             ✕
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 safe-bottom">
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 safe-bottom">
           {children}
         </div>
       </div>
@@ -171,6 +178,44 @@ export function Pallino({ nome, size = "h-12 w-12 text-base" }: { nome: string; 
     >
       {iniziali(nome)}
     </span>
+  );
+}
+
+/* ------------------------------ card persona ----------------------------- */
+
+/** Chi è la persona e a quanto sta: sostituisce il titolo del tastierino. */
+export function CardPersona({
+  nome,
+  totaleCents,
+  articoli,
+  azione,
+}: {
+  nome: string;
+  totaleCents: number;
+  articoli: number;
+  azione?: ReactNode;
+}) {
+  const abs = Math.abs(totaleCents);
+  const euro = `${totaleCents < 0 ? "-" : ""}${Math.floor(abs / 100).toLocaleString("it-IT")},${String(
+    abs % 100,
+  ).padStart(2, "0")} €`;
+
+  return (
+    <div className="flex items-center gap-3">
+      <Pallino nome={nome} />
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[17px] font-bold leading-tight">{nome}</p>
+        <p className="text-xs text-muted">
+          {articoli} {articoli === 1 ? "articolo venduto" : "articoli venduti"}
+        </p>
+      </div>
+      <div className="shrink-0 text-right">
+        <p className="tabular text-2xl font-bold leading-tight text-brand-600 dark:text-brand-300">
+          {euro}
+        </p>
+        {azione}
+      </div>
+    </div>
   );
 }
 

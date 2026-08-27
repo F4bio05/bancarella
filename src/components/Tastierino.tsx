@@ -9,7 +9,7 @@ import {
   salvaImportiRapidi,
 } from "@/lib/local";
 import type { Movement, Participant } from "@/lib/types";
-import { Bottone, Pallino } from "./ui";
+import { Bottone } from "./ui";
 
 const TASTI = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "00", "0", "⌫"];
 
@@ -79,22 +79,6 @@ export function Tastierino({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Saldo della persona */}
-      <div className="surface-2 flex items-center gap-3 rounded-2xl px-4 py-3">
-        <Pallino nome={persona.name} />
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold">{persona.name}</p>
-          <p className="text-xs text-muted">
-            {persona.items} {persona.items === 1 ? "articolo" : "articoli"} venduti oggi
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="tabular text-2xl font-bold text-brand-600 dark:text-brand-300">
-            {formatEuro(persona.totalCents)}
-          </p>
-        </div>
-      </div>
-
       {/* Display importo */}
       <div className="relative">
         <div
@@ -140,7 +124,7 @@ export function Tastierino({
                 if (modificaRapidi) cambiaRapido(i);
                 else onDigits(String(v));
               }}
-              className={`tabular min-h-[46px] rounded-xl border text-[15px] font-bold ${
+              className={`tabular min-h-[44px] rounded-xl border text-[15px] font-bold ${
                 modificaRapidi
                   ? "border-dashed border-brand-400 text-brand-600 dark:text-brand-300"
                   : "border-app surface-2 active:bg-brand-100 dark:active:bg-brand-800"
@@ -167,8 +151,9 @@ export function Tastierino({
         ))}
       </div>
 
-      {/* Azioni */}
-      <div className="flex gap-2">
+      {/* Azioni: restano agganciate in fondo all'area che scorre, così su
+          telefono sono raggiungibili senza dover scorrere il tastierino. */}
+      <div className="surface sticky bottom-0 -mx-4 flex gap-2 border-t border-app px-4 pb-1 pt-2">
         <Bottone
           variante="pericolo"
           disabled={importo <= 0 || solaLettura}
