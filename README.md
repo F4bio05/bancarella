@@ -102,7 +102,7 @@ In `deploy/` ci sono due file pronti da adattare:
 Su un server con più siti non c'è niente da modificare in `nginx.conf`: il file
 va in `/etc/nginx/conf.d/`, non usa `default_server` e ha log separati, quindi
 gli altri virtual host non se ne accorgono. L'applicazione ascolta solo su
-`127.0.0.1:3000`, così si raggiunge unicamente passando da nginx; se quella
+`127.0.0.1:5000`, così si raggiunge unicamente passando da nginx; se quella
 porta è già occupata, cambiala nell'unità systemd e nel `proxy_pass`.
 
 ```bash
