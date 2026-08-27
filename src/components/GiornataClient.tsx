@@ -390,17 +390,20 @@ function GiornataAperta({
     setConferma(null);
   };
 
-  const tastierino = persona ? (
-    <Tastierino
-      compatto={affiancato}
-      persona={persona}
-      movimenti={movimentiPersona}
-      digits={digits}
-      onDigits={setDigits}
-      onRegistra={registra}
-      onAnnulla={(m) => void g.annullaMovimento(m.id, m.clientId)}
-    />
-  ) : null;
+  /** `pieno` riempie lo schermo del telefono, `compatto` sta nella colonna. */
+  const tastierino = (modo: "pieno" | "compatto") =>
+    persona ? (
+      <Tastierino
+        pieno={modo === "pieno"}
+        compatto={modo === "compatto"}
+        persona={persona}
+        movimenti={movimentiPersona}
+        digits={digits}
+        onDigits={setDigits}
+        onRegistra={registra}
+        onAnnulla={(m) => void g.annullaMovimento(m.id, m.clientId)}
+      />
+    ) : null;
 
   const chiudi = async () => {
     setChiusuraInCorso(true);
@@ -436,10 +439,14 @@ function GiornataAperta({
               <AzioniGiornata />
             </div>
 
-            <div className="rounded-3xl bg-brand-600 px-5 py-4 text-white">
-              <p className="text-sm font-semibold text-brand-100">Incasso della giornata</p>
-              <p className="tabular text-4xl font-bold">{formatEuro(stato.day.totalCents)}</p>
-              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-brand-100">
+            <div className="grad-brand ombra-2 rounded-3xl px-5 py-5 text-white">
+              <p className="text-xs font-bold uppercase tracking-wider text-white/70">
+                Incasso della giornata
+              </p>
+              <p className="tabular mt-0.5 text-[2.75rem] font-bold leading-none tracking-tight">
+                {formatEuro(stato.day.totalCents)}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/75">
                 <span>
                   {stato.day.itemsCount} {stato.day.itemsCount === 1 ? "articolo" : "articoli"}
                 </span>
@@ -469,7 +476,9 @@ function GiornataAperta({
 
           {/* Elenco persone */}
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-bold">Elenco persone</h2>
+            <h2 className="text-[11px] font-bold uppercase tracking-wider text-muted">
+              Elenco persone
+            </h2>
             <div className="surface-2 flex rounded-full p-1 text-xs font-semibold">
               {(["nome", "totale"] as const).map((o) => (
                 <button
@@ -499,7 +508,7 @@ function GiornataAperta({
               />
             </div>
           ) : (
-            <ul className="mb-3 divide-y divide-[var(--border)] overflow-hidden rounded-3xl border border-app">
+            <ul className="ombra-1 mb-3 divide-y divide-[var(--border)] overflow-hidden rounded-3xl border border-app">
               {partecipanti.map((p) => (
                 <li key={p.personId}>
                   <button
@@ -513,7 +522,7 @@ function GiornataAperta({
                         : "surface"
                     }`}
                   >
-                    <Pallino nome={p.name} />
+                    <Pallino nome={p.name} size="h-12 w-12 text-base" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[17px] font-semibold">{p.name}</span>
                       <span className="block text-xs text-muted">
@@ -577,7 +586,7 @@ function GiornataAperta({
                 <h2 className="text-lg font-bold">Articolo venduto</h2>
               )}
             </div>
-            {tastierino ?? (
+            {tastierino("compatto") ?? (
               <Vuoto
                 icona="👈"
                 titolo="Scegli una persona"
@@ -614,6 +623,8 @@ function GiornataAperta({
       {!affiancato && (
         <Pannello
           aperto={!!persona}
+          pieno
+          scorrevole={false}
           onChiudi={() => {
             setSelezionato(null);
             setDigits("");
@@ -628,7 +639,7 @@ function GiornataAperta({
             )
           }
         >
-          {tastierino}
+          {tastierino("pieno")}
         </Pannello>
       )}
 

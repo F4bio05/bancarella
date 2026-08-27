@@ -109,10 +109,12 @@ export function StoricoClient({ giornate, totali }: { giornate: DaySummary[]; to
                             </span>
                           </span>
                           <span className="min-w-0 flex-1">
-                            <span className="block truncate font-semibold">
-                              {g.label ?? formatDataBreve(g.date)}
+                            <span className="flex items-center gap-2">
+                              <span className="truncate font-semibold">
+                                {g.label ?? formatDataBreve(g.date)}
+                              </span>
                               {g.status === "open" && (
-                                <span className="ml-2 rounded-full bg-amber-500/20 px-2 py-0.5 text-[11px] font-bold text-amber-700 dark:text-amber-300">
+                                <span className="shrink-0 rounded-full bg-amber-500/20 px-2 py-0.5 text-[11px] font-bold text-amber-700 dark:text-amber-300">
                                   aperta
                                 </span>
                               )}

@@ -40,7 +40,7 @@ export function FormAccesso({ modo }: { modo: "login" | "registrazione" }) {
   return (
     <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col justify-center gap-6 px-5 py-10 safe-top">
       <div className="text-center">
-        <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-3xl bg-brand-600 text-3xl">
+        <div className="grad-brand ombra-2 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl text-3xl">
           🧺
         </div>
         <h1 className="text-2xl font-bold">Bancarella</h1>

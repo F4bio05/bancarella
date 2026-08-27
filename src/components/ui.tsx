@@ -7,9 +7,9 @@ import { useEffect, type ReactNode } from "react";
 type Variante = "primario" | "neutro" | "pericolo" | "fantasma" | "successo";
 
 const VARIANTI: Record<Variante, string> = {
-  primario: "bg-brand-600 text-white active:bg-brand-700 disabled:bg-brand-600/40",
-  successo: "bg-emerald-600 text-white active:bg-emerald-700 disabled:bg-emerald-600/40",
-  pericolo: "bg-rose-600 text-white active:bg-rose-700 disabled:bg-rose-600/40",
+  primario: "grad-brand text-white ombra-1 disabled:opacity-45",
+  successo: "grad-brand text-white ombra-1 disabled:opacity-45",
+  pericolo: "bg-rose-600 text-white ombra-1 active:bg-rose-700 disabled:opacity-45",
   neutro: "surface border border-app text-[var(--text)] active:surface-2",
   fantasma: "text-muted active:surface-2",
 };
@@ -28,7 +28,7 @@ export function Bottone({
   return (
     <button
       {...rest}
-      className={`inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl px-5 text-[17px] font-semibold transition-colors disabled:opacity-60 ${
+      className={`premi inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl px-5 text-[16px] font-semibold disabled:pointer-events-none ${
         VARIANTI[variante]
       } ${full ? "w-full" : ""} ${className}`}
     >
@@ -40,12 +40,20 @@ export function Bottone({
 /* ---------------------------------- card --------------------------------- */
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`surface rounded-3xl border border-app ${className}`}>{children}</div>;
+  return (
+    <div className={`surface ombra-1 rounded-3xl border border-app ${className}`}>{children}</div>
+  );
 }
 
 /* -------------------------------- pannello ------------------------------- */
 
-/** Bottom sheet su telefono, finestra centrata su tablet. */
+/**
+ * Bottom sheet su telefono, finestra centrata su tablet.
+ *
+ * `pieno` lo porta a tutta altezza sul telefono e `scorrevole={false}` toglie
+ * lo scorrimento: il contenuto si adatta allo spazio disponibile. È così che
+ * il tastierino sta sempre in una schermata sola.
+ */
 export function Pannello({
   aperto,
   onChiudi,
@@ -54,6 +62,8 @@ export function Pannello({
   intestazione,
   children,
   larghezza = "max-w-lg",
+  pieno,
+  scorrevole = true,
 }: {
   aperto: boolean;
   onChiudi: () => void;
@@ -63,6 +73,8 @@ export function Pannello({
   intestazione?: ReactNode;
   children: ReactNode;
   larghezza?: string;
+  pieno?: boolean;
+  scorrevole?: boolean;
 }) {
   useEffect(() => {
     if (!aperto) return;
@@ -81,18 +93,25 @@ export function Pannello({
   if (!aperto) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
       <button
         aria-label="Chiudi"
         onClick={onChiudi}
-        className="animate-fade absolute inset-0 bg-black/45 backdrop-blur-[2px]"
+        className="animate-fade absolute inset-0 bg-black/50 backdrop-blur-[3px]"
       />
       <div
         role="dialog"
         aria-modal="true"
-        className={`animate-sheet surface relative flex max-h-[92dvh] w-full ${larghezza} flex-col overflow-hidden rounded-t-3xl border border-app sm:rounded-3xl`}
+        className={`animate-sheet surface ombra-3 relative flex w-full ${larghezza} flex-col overflow-hidden border border-app ${
+          pieno
+            ? // Anche da tablet il pannello deve avere un'altezza definita:
+              // con `h-auto` i tasti non avrebbero spazio da riempire e
+              // collasserebbero all'altezza minima.
+              "h-[100dvh] rounded-none sm:h-[min(92dvh,44rem)] sm:rounded-3xl"
+            : "max-h-[92dvh] rounded-t-3xl sm:rounded-3xl"
+        }`}
       >
-        <div className="flex items-start gap-3 border-b border-app px-4 pb-3 pt-4">
+        <div className="flex shrink-0 items-center gap-3 border-b border-app px-4 pb-3 safe-top">
           <div className="min-w-0 flex-1">
             {intestazione ?? (
               <>
@@ -104,12 +123,19 @@ export function Pannello({
           <button
             onClick={onChiudi}
             aria-label="Chiudi"
-            className="surface-2 -mr-1 -mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl text-muted"
+            className="premi surface-2 -mr-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg text-muted"
           >
             ✕
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 safe-bottom">
+
+        <div
+          className={
+            scorrevole
+              ? "flex-1 overflow-y-auto overscroll-contain px-4 py-4 safe-bottom"
+              : "flex min-h-0 flex-1 flex-col overflow-hidden px-4 pt-3 safe-bottom"
+          }
+        >
           {children}
         </div>
       </div>
@@ -129,9 +155,9 @@ export function Avviso({
   onChiudi?: () => void;
 }) {
   const stile = {
-    errore: "bg-rose-500/12 text-rose-700 dark:text-rose-300 border-rose-500/30",
-    info: "bg-amber-500/12 text-amber-800 dark:text-amber-200 border-amber-500/30",
-    ok: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
+    errore: "bg-rose-500/12 text-rose-700 dark:text-rose-300 border-rose-500/25",
+    info: "bg-amber-500/12 text-amber-800 dark:text-amber-200 border-amber-500/25",
+    ok: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
   }[tipo];
   return (
     <div className={`flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm ${stile}`}>
@@ -171,10 +197,10 @@ export function iniziali(nome: string): string {
   return ((parti[0]?.[0] ?? "") + (parti[1]?.[0] ?? "")).toUpperCase() || "?";
 }
 
-export function Pallino({ nome, size = "h-12 w-12 text-base" }: { nome: string; size?: string }) {
+export function Pallino({ nome, size = "h-11 w-11 text-sm" }: { nome: string; size?: string }) {
   return (
     <span
-      className={`flex shrink-0 items-center justify-center rounded-full font-bold text-white ${size} ${tintaDaNome(nome)}`}
+      className={`flex shrink-0 items-center justify-center rounded-full font-bold tracking-wide text-white ring-2 ring-white/25 ${size} ${tintaDaNome(nome)}`}
     >
       {iniziali(nome)}
     </span>
@@ -202,7 +228,7 @@ export function CardPersona({
 
   return (
     <div className="flex items-center gap-3">
-      <Pallino nome={nome} />
+      <Pallino nome={nome} size="h-12 w-12 text-base" />
       <div className="min-w-0 flex-1">
         <p className="truncate text-[17px] font-bold leading-tight">{nome}</p>
         <p className="text-xs text-muted">
@@ -234,7 +260,9 @@ export function Vuoto({
 }) {
   return (
     <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
-      <span className="text-5xl">{icona}</span>
+      <span className="surface-2 flex h-16 w-16 items-center justify-center rounded-2xl text-3xl">
+        {icona}
+      </span>
       <h3 className="text-lg font-bold">{titolo}</h3>
       {testo && <p className="max-w-sm text-sm text-muted">{testo}</p>}
       {azione}

@@ -85,17 +85,23 @@ export function Nav({ nome }: { nome: string }) {
   return (
     <>
       {/* Barra inferiore (telefono) */}
-      <nav className="surface safe-bottom fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-app md:hidden">
+      <nav className="surface ombra-2 safe-bottom fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-app pt-1.5 md:hidden">
         {VOCI.map((v) => (
           <Link
             key={v.href}
             href={v.href}
-            className={`flex flex-col items-center gap-0.5 pt-2 text-[11px] font-semibold ${
-              attivo(v.href) ? "text-brand-600 dark:text-brand-300" : "text-muted"
-            }`}
+            className="flex flex-col items-center gap-1 text-[11px] font-semibold"
           >
-            <span className="text-2xl leading-none">{v.icona}</span>
-            {v.label}
+            <span
+              className={`flex h-8 w-16 items-center justify-center rounded-full text-xl leading-none transition-colors ${
+                attivo(v.href) ? "bg-brand-100 dark:bg-brand-800" : ""
+              }`}
+            >
+              {v.icona}
+            </span>
+            <span className={attivo(v.href) ? "text-brand-600 dark:text-brand-300" : "text-muted"}>
+              {v.label}
+            </span>
           </Link>
         ))}
       </nav>

@@ -104,10 +104,12 @@ export function DettaglioGiornata({ stato }: { stato: DayState }) {
         </div>
       )}
 
-      <div className="mb-4 rounded-3xl bg-brand-600 px-5 py-4 text-white">
-        <p className="text-sm font-semibold text-brand-100">Incasso</p>
-        <p className="tabular text-4xl font-bold">{formatEuro(day.totalCents)}</p>
-        <div className="mt-2 flex flex-wrap gap-x-4 text-sm text-brand-100">
+      <div className="grad-brand ombra-2 mb-4 rounded-3xl px-5 py-5 text-white">
+        <p className="text-xs font-bold uppercase tracking-wider text-white/70">Incasso</p>
+        <p className="tabular mt-0.5 text-[2.75rem] font-bold leading-none tracking-tight">
+          {formatEuro(day.totalCents)}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-x-4 text-sm text-white/75">
           <span>
             {day.itemsCount} {day.itemsCount === 1 ? "articolo" : "articoli"}
           </span>
@@ -118,7 +120,9 @@ export function DettaglioGiornata({ stato }: { stato: DayState }) {
         </div>
       </div>
 
-      <h2 className="mb-2 font-bold">Totale per persona</h2>
+      <h2 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted">
+        Totale per persona
+      </h2>
       <ul className="mb-4 divide-y divide-[var(--border)] overflow-hidden rounded-3xl border border-app">
         {ordinati.map((p) => (
           <li key={p.personId} className="surface flex items-center gap-3 px-4 py-3">

@@ -104,10 +104,10 @@ export function PersoneClient({
                 >
                   <Pallino nome={p.name} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[17px] font-semibold">
-                      {p.name}
+                    <span className="flex items-center gap-2">
+                      <span className="truncate text-[17px] font-semibold">{p.name}</span>
                       {p.archived && (
-                        <span className="ml-2 rounded-full surface-2 px-2 py-0.5 text-[11px] font-bold text-muted">
+                        <span className="surface-2 shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold text-muted">
                           archiviata
                         </span>
                       )}

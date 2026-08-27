@@ -2,52 +2,63 @@
 
 @theme {
   --font-sans:
-    ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --color-brand-50: #eefbf4;
-  --color-brand-100: #d5f5e3;
-  --color-brand-200: #aeeacb;
-  --color-brand-300: #78d8ac;
-  --color-brand-400: #41bd89;
-  --color-brand-500: #1da16d;
-  --color-brand-600: #108157;
-  --color-brand-700: #0d6748;
-  --color-brand-800: #0d523a;
-  --color-brand-900: #0b4331;
+    ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+
+  --color-brand-50: #ecfbf3;
+  --color-brand-100: #d1f5e3;
+  --color-brand-200: #a5e9c8;
+  --color-brand-300: #6bd7a7;
+  --color-brand-400: #33bd85;
+  --color-brand-500: #16a06d;
+  --color-brand-600: #0f8459;
+  --color-brand-700: #0c6a48;
+  --color-brand-800: #0b533a;
+  --color-brand-900: #09422f;
 }
 
-/* Il tema e' scelto dall'utente e salvato in un cookie: il server mette
-   data-tema su <html>, quindi al primo caricamento non c'e' alcun lampo di
-   colore sbagliato. Il chiaro e' il default. */
+/* Il tema è scelto dall'utente e salvato in un cookie: il server mette
+   data-tema su <html>, quindi al primo caricamento non c'è alcun lampo di
+   colore sbagliato. Il chiaro è il default. */
 
 :root,
 :root[data-tema="chiaro"] {
-  --bg: #f6f5f2;
+  --bg: #f7f6f3;
   --surface: #ffffff;
   --surface-2: #f1efe9;
-  --border: #e2ded4;
-  --text: #1b1a17;
-  --muted: #6d6a61;
+  --border: #e6e2d9;
+  --text: #1a1917;
+  --muted: #6f6b62;
+  --ombra-1: 0 1px 2px rgb(23 22 20 / 0.05), 0 1px 3px rgb(23 22 20 / 0.05);
+  --ombra-2: 0 2px 6px rgb(23 22 20 / 0.06), 0 8px 24px rgb(23 22 20 / 0.08);
+  --ombra-3: 0 -4px 32px rgb(23 22 20 / 0.14);
   color-scheme: light;
 }
 
 :root[data-tema="scuro"] {
-  --bg: #14140f;
-  --surface: #1e1e18;
-  --surface-2: #272720;
-  --border: #35352c;
-  --text: #f2f0e9;
+  --bg: #121211;
+  --surface: #1c1c1a;
+  --surface-2: #262623;
+  --border: #333330;
+  --text: #f3f1ec;
   --muted: #a3a096;
+  --ombra-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --ombra-2: 0 2px 6px rgb(0 0 0 / 0.35), 0 8px 24px rgb(0 0 0 / 0.45);
+  --ombra-3: 0 -4px 32px rgb(0 0 0 / 0.55);
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root[data-tema="sistema"] {
-    --bg: #14140f;
-    --surface: #1e1e18;
-    --surface-2: #272720;
-    --border: #35352c;
-    --text: #f2f0e9;
+    --bg: #121211;
+    --surface: #1c1c1a;
+    --surface-2: #262623;
+    --border: #333330;
+    --text: #f3f1ec;
     --muted: #a3a096;
+    --ombra-1: 0 1px 2px rgb(0 0 0 / 0.4);
+    --ombra-2: 0 2px 6px rgb(0 0 0 / 0.35), 0 8px 24px rgb(0 0 0 / 0.45);
+    --ombra-3: 0 -4px 32px rgb(0 0 0 / 0.55);
     color-scheme: dark;
   }
 }
@@ -74,9 +85,9 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
-  min-height: 100vh;
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
 }
 
 /* Niente selezione/callout accidentali sui controlli a tocco. */
@@ -92,7 +103,7 @@ button,
 input,
 textarea,
 select {
-  font-size: 16px; /* iOS non zooma piu' al focus */
+  font-size: 16px; /* iOS non zooma più al focus */
 }
 
 @utility surface {
@@ -107,30 +118,61 @@ select {
 @utility border-app {
   border-color: var(--border);
 }
+@utility ombra-1 {
+  box-shadow: var(--ombra-1);
+}
+@utility ombra-2 {
+  box-shadow: var(--ombra-2);
+}
+@utility ombra-3 {
+  box-shadow: var(--ombra-3);
+}
+
+/* Sfondo di richiamo per le superfici principali (totale, accesso). */
+@utility grad-brand {
+  background-image: linear-gradient(140deg, var(--color-brand-500), var(--color-brand-700) 78%);
+}
+
+/* Risposta al tocco: piccola compressione, immediata. */
+@utility premi {
+  transition:
+    transform 90ms ease-out,
+    background-color 120ms ease-out;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
 
 .tabular {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
 
+/* Queste due impostano `padding`, quindi vincono sulle classi pt- e pb-
+   scritte accanto: devono portarsi dietro un minimo, altrimenti dove non c'è
+   una safe area (desktop, Android, tablet) il margine diventa zero. */
 .safe-bottom {
-  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+  padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
 }
 .safe-top {
-  padding-top: env(safe-area-inset-top);
+  padding-top: max(env(safe-area-inset-top), 1rem);
 }
 
 @keyframes sheet-up {
   from {
-    transform: translateY(100%);
+    transform: translateY(6%);
+    opacity: 0.6;
   }
   to {
     transform: translateY(0);
+    opacity: 1;
   }
 }
 .animate-sheet {
-  animation: sheet-up 0.22s cubic-bezier(0.2, 0.9, 0.3, 1);
+  animation: sheet-up 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -140,21 +182,27 @@ select {
   }
 }
 .animate-fade {
-  animation: fade-in 0.18s ease-out;
+  animation: fade-in 0.15s ease-out;
 }
+
 @keyframes pop {
   0% {
-    transform: scale(0.8);
+    transform: translateY(8px) scale(0.96);
     opacity: 0;
   }
-  60% {
-    transform: scale(1.06);
-  }
   100% {
-    transform: scale(1);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
 .animate-pop {
-  animation: pop 0.25s ease-out;
+  animation: pop 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sheet,
+  .animate-fade,
+  .animate-pop {
+    animation: none;
+  }
 }
