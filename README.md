@@ -49,6 +49,96 @@ npm run build
 npm run start:lan
 ```
 
+## Metterla su un server Linux
+
+Serve **Node ≥ 22.13** (meglio la 24): il database usa `node:sqlite`, che nelle
+versioni precedenti non esiste — su Node 20 la build muore con
+`No such built-in module: node:sqlite`. Verifica sempre così, non solo con
+`node -v`:
+
+```bash
+node -e "require('node:sqlite'); console.log('node:sqlite ok')"
+```
+
+### Aggiornare Node su AlmaLinux / RHEL / Rocky 9
+
+Node 22 è in AppStream, non serve nessun repo esterno:
+
+```bash
+dnf module reset -y nodejs && dnf module enable -y nodejs:22 && dnf install -y nodejs
+```
+
+Se la 22 di AppStream fosse più vecchia della 22.13, prendi la 24 da NodeSource:
+
+```bash
+dnf module reset -y nodejs
+curl -fsSL https://rpm.nodesource.com/setup_24.x | bash -
+dnf install -y nodejs
+```
+
+Su Debian/Ubuntu l'equivalente è `deb.nodesource.com/setup_24.x` seguito da
+`apt-get install -y nodejs`.
+
+### Installare l'applicazione
+
+```bash
+mkdir -p /opt/bancarella /var/lib/bancarella
+# copia qui il progetto (git clone oppure rsync), quindi:
+cd /opt/bancarella && npm ci && npm run build
+```
+
+`npm ci` completo, non `--omit=dev`: la build usa TypeScript e Tailwind.
+
+In `deploy/` ci sono due file pronti da adattare:
+
+- [`bancarella.service`](deploy/bancarella.service) — unità systemd, con
+  `DATA_DIR` fuori dalla cartella dell'app;
+- [`nginx-bancarella.conf`](deploy/nginx-bancarella.conf) — virtual host, primo
+  passo in solo HTTP perché certbot possa emettere il certificato;
+- [`nginx-bancarella-tls.conf`](deploy/nginx-bancarella-tls.conf) — la versione
+  finale con HTTPS, se preferisci scriverla a mano invece di lasciar fare a
+  `certbot --nginx`.
+
+Su un server con più siti non c'è niente da modificare in `nginx.conf`: il file
+va in `/etc/nginx/conf.d/`, non usa `default_server` e ha log separati, quindi
+gli altri virtual host non se ne accorgono. L'applicazione ascolta solo su
+`127.0.0.1:3000`, così si raggiunge unicamente passando da nginx; se quella
+porta è già occupata, cambiala nell'unità systemd e nel `proxy_pass`.
+
+```bash
+useradd -r -s /sbin/nologin bancarella
+chown -R bancarella:bancarella /opt/bancarella /var/lib/bancarella
+cp deploy/bancarella.service /etc/systemd/system/
+systemctl daemon-reload && systemctl enable --now bancarella
+journalctl -u bancarella -f
+```
+
+### Le cinque cose su cui è facile inciampare
+
+1. **HTTPS.** In produzione il cookie di sessione è `secure`: su HTTP semplice il
+   browser lo scarta e l'accesso non funziona, senza errori chiari. Se il server
+   risponde solo in HTTP, imposta `COOKIE_NON_SICURO=1` — sapendo che così
+   password e sessione viaggiano in chiaro.
+2. **`DATA_DIR` fuori da `/opt/bancarella`**, altrimenti il prossimo deploy
+   cancella il database.
+3. **SELinux** (attivo per default su AlmaLinux): senza questo nginx non riesce a
+   contattare l'applicazione e risponde 502.
+   ```bash
+   setsebool -P httpd_can_network_connect 1
+   ```
+4. **firewalld**: apri le porte, altrimenti da fuori non arrivi.
+   ```bash
+   firewall-cmd --permanent --add-service=http --add-service=https && firewall-cmd --reload
+   ```
+5. **Un solo processo.** Il database è un file SQLite: niente cluster mode né più
+   istanze in bilanciamento.
+
+### Se Node non si potesse aggiornare
+
+L'alternativa è cambiare driver (`node-sqlite3-wasm`, funziona da Node 18 senza
+compilazione nativa): cambia solo `src/lib/db.ts`, il formato del file `.db`
+resta lo stesso. Sul tuo server però Node si aggiorna, quindi non serve.
+
 ## Dove finiscono i dati
 
 **Database SQLite** — un unico file in `data/bancarella.db` (cartella creata

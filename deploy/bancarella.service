@@ -1,0 +1,48 @@
+# Servizio systemd per Bancarella.
+#
+#   sudo cp deploy/bancarella.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now bancarella
+#   sudo journalctl -u bancarella -f      # per vedere i log
+#
+# Adatta User, WorkingDirectory e il percorso di node alla tua macchina.
+# IMPORTANTE: systemd non conosce nvm. Se hai installato Node con nvm devi
+# mettere in ExecStart il percorso completo (`which node` te lo dice), oppure
+# installare Node a livello di sistema.
+
+[Unit]
+Description=Bancarella — conto per persona
+After=network.target
+
+[Service]
+Type=simple
+User=bancarella
+Group=bancarella
+WorkingDirectory=/opt/bancarella
+
+Environment=NODE_ENV=production
+# Il database vive fuori dalla cartella dell'app: un deploy non lo tocca.
+Environment=DATA_DIR=/var/lib/bancarella
+# Da attivare SOLO se il sito risponde in HTTP e non in HTTPS, altrimenti il
+# browser scarta il cookie di sessione e l'accesso non funziona.
+# Environment=COOKIE_NON_SICURO=1
+
+# -H 127.0.0.1 e' importante su un server con piu' siti: l'applicazione
+# ascolta solo in locale, quindi si raggiunge unicamente passando da nginx (e
+# quindi da HTTPS), non puntando la porta 3000 dall'esterno.
+# Se la 3000 e' gia' occupata da un altro sito, cambiala qui e nel file nginx:
+#   ss -lptn 'sport = :3000'
+ExecStart=/usr/bin/node node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000
+
+Restart=on-failure
+RestartSec=3
+
+# Il database è l'unico stato che l'applicazione deve poter scrivere.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/bancarella /opt/bancarella/.next
+
+[Install]
+WantedBy=multi-user.target
