@@ -89,10 +89,26 @@ cd /opt/bancarella && npm ci && npm run build
 
 `npm ci` completo, non `--omit=dev`: la build usa TypeScript e Tailwind.
 
-In `deploy/` ci sono due file pronti da adattare:
+### Tenerla in piedi
 
-- [`bancarella.service`](deploy/bancarella.service) — unità systemd, con
-  `DATA_DIR` fuori dalla cartella dell'app;
+Con pm2, che è la via più corta:
+
+```bash
+npm i -g pm2 && pm2 start ecosystem.config.cjs && pm2 save && pm2 startup
+```
+
+L'ultimo comando stampa una riga da eseguire: è quella che registra pm2 in
+systemd, così l'app riparte anche dopo un riavvio della macchina. La
+configurazione è in [`ecosystem.config.cjs`](ecosystem.config.cjs) — porta,
+`DATA_DIR` e un solo processo in `fork` mode, perché il database è un file
+SQLite. I log si leggono con `pm2 logs bancarella`.
+
+Se preferisci systemd senza pm2, in `deploy/` c'è
+[`bancarella.service`](deploy/bancarella.service) già pronto: usa una delle due
+strade, non entrambe.
+
+In `deploy/` ci sono poi i file per nginx:
+
 - [`nginx-bancarella.conf`](deploy/nginx-bancarella.conf) — virtual host, primo
   passo in solo HTTP perché certbot possa emettere il certificato;
 - [`nginx-bancarella-tls.conf`](deploy/nginx-bancarella-tls.conf) — la versione
