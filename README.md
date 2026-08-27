@@ -17,6 +17,13 @@ al banco.
 4. **Chiudi la giornata** — vedi il riepilogo, confermi e tutto viene salvato
    nello storico, giorno per giorno. Una giornata chiusa si può sempre riaprire.
 
+Il tastierino non si scorre mai: display e tasti si spartiscono l'altezza
+disponibile, entro un minimo e un tetto, così _Aggiungi_ e _Rimuovi_ restano
+sempre sotto il pollice senza che i tasti si deformino sugli schermi alti.
+L'intestazione mostra la card della persona — nome, articoli venduti, saldo — e
+i suoi movimenti stanno dietro il tasto 🕘, che li apre sopra il tastierino
+invece di allungare la pagina.
+
 Dopo ogni importo la persona viene **deselezionata automaticamente**: il
 tastierino si chiude e non si rischia di attribuire l'articolo successivo allo
 stesso nome per distrazione. Al suo posto compare per qualche secondo una
@@ -182,11 +189,11 @@ viene registrato due volte**.
 
 ## Layout
 
-| Schermo                        | Come si presenta                                                       |
-| ------------------------------ | ---------------------------------------------------------------------- |
-| telefono                       | una colonna, navigazione in barra sotto, tastierino che sale dal basso |
-| tablet in verticale            | come sopra, con più respiro; colonna laterale di navigazione           |
-| **tablet in orizzontale / PC** | **elenco a sinistra, tastierino sempre aperto a destra**               |
+| Schermo                        | Come si presenta                                                    |
+| ------------------------------ | ------------------------------------------------------------------- |
+| telefono                       | una colonna, navigazione in barra sotto, tastierino a tutto schermo |
+| tablet in verticale            | il tastierino si apre come finestra centrata, ad altezza piena      |
+| **tablet in orizzontale / PC** | **elenco a sinistra, tastierino sempre aperto a destra**            |
 
 La vista affiancata scatta a `(min-width: 1024px) and (orientation: landscape)`:
 prende quindi l'iPad in orizzontale e qualunque schermo da PC, ma lascia in

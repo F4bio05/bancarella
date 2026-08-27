@@ -86,13 +86,15 @@ export function Tastierino({
     onDigits("");
   };
 
+  // In modalità piena display e tastiera si spartiscono lo spazio libero, con
+  // un minimo e un tetto: sotto restano usabili, sopra non si deformano.
   const hDisplay = pieno
-    ? "h-[clamp(4.25rem,10dvh,6.5rem)]"
+    ? "min-h-[4.5rem] max-h-[9.5rem] flex-1"
     : compatto
       ? "h-[4.5rem]"
       : "h-[5.5rem]";
   const dimImporto = pieno
-    ? "text-[clamp(2.25rem,8vw,3.25rem)]"
+    ? "text-[clamp(2.25rem,9vw,3.75rem)]"
     : compatto
       ? "text-4xl"
       : "text-5xl";
@@ -102,7 +104,9 @@ export function Tastierino({
     <div className={`flex flex-col gap-2.5 ${pieno ? "h-full min-h-0" : ""}`}>
       {/* Display dell'importo */}
       <div
-        className={`flex shrink-0 items-baseline justify-end gap-2 rounded-2xl border px-5 transition-colors ${hDisplay} ${
+        className={`flex items-baseline justify-end gap-2 rounded-2xl border px-5 transition-colors ${
+          pieno ? "" : "shrink-0"
+        } ${hDisplay} ${
           importo > 0
             ? "border-brand-300 bg-brand-50 dark:border-brand-700 dark:bg-brand-900/40"
             : "border-app surface-2"
@@ -172,7 +176,9 @@ export function Tastierino({
           lo spazio che avanza, così non resta mai niente da scorrere. */}
       <div
         className={`relative grid grid-cols-3 gap-2 ${
-          pieno ? "min-h-[15rem] flex-1 grid-rows-4" : ""
+          // I tasti si adattano allo spazio libero ma con un tetto: senza,
+          // su uno schermo alto diventavano rettangoloni sproporzionati.
+          pieno ? "max-h-[21rem] min-h-[11rem] flex-[1.7] grid-rows-4" : ""
         }`}
       >
         {TASTI.map((t) => (
